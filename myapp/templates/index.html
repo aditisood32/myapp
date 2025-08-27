@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Iris Prediction App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Iris Prediction 🌸</h2>
+    <form id="predictForm">
+      <input type="number" step="any" id="f1" placeholder="Sepal Length" required>
+      <input type="number" step="any" id="f2" placeholder="Sepal Width" required>
+      <input type="number" step="any" id="f3" placeholder="Petal Length" required>
+      <input type="number" step="any" id="f4" placeholder="Petal Width" required>
+      <button type="submit">Predict</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("predictForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      let features = [
+        parseFloat(document.getElementById("f1").value),
+        parseFloat(document.getElementById("f2").value),
+        parseFloat(document.getElementById("f3").value),
+        parseFloat(document.getElementById("f4").value),
+      ];
+
+      let response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: features })
+      });
+
+      let result = await response.json();
+      console.log(result); // debug
+
+      if (result.flower) {
+        document.getElementById("result").innerText =
+          "Prediction: " + result.flower + " (Class " + result.prediction + ")";
+      } else {
+        document.getElementById("result").innerText =
+          "Error: " + (result.error || "Unknown error");
+      }
+    });
+  </script>
+</body>
+</html>
